@@ -20,6 +20,7 @@ function [V, C] = ode_integration(m_0, theta, R)
         t(j) = steps(j - 1, 2) / (steps(j - 1, 1) * M_i(j)) * m_e(j);
     end
     hold on;
+    axis equal;
     k = 0;
     v = zeros(1, 4);
     v(1) = 100;
@@ -34,9 +35,12 @@ function [V, C] = ode_integration(m_0, theta, R)
         plot(Q(:, 1), Q(:, 2));
         k = k + 1;
     end
+    T = 0:0.001:1;
+    plot(R_t * T, R_t * sqrt(1 - T.^2));
+    plot(R_t * T, -R_t * sqrt(1 - T.^2));
     hold off;
     N = length(t);
-    V = dot(Q(N, 3:4), Q(N, 3:4)); % valeur
+    V = -dot(Q(N, 3:4), Q(N, 3:4)); % valeur
     C = dot(Q(N, 1:2), Q(N, 3:4)); % contraintes
 end
 
