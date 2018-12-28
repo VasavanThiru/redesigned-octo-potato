@@ -1,26 +1,39 @@
-function []=ode_integration(m_0, theta, R)
+function [V, C] = ode_integration(m_0, theta, R)
     mu = 3.986e14;
     R_t = 6378137;
     steps = [15, 2600, 0.1; 10, 3000, 0.15; 10, 4400, 0.20]; % acceleration, vitesse, indice
 
-    k = 0;
     R_0 = [R_t; 0];
-    x_m
-    V_p = sqrt(mu / R);
-    mass = @(x) [-prod(steps(1, 1:3) ./ x - step(1, 1:3)), dot(step(2, 1:3), log(x)) - V_p];
-    [x, ~, ~, ~] = SQP(x_0, mass, 0.001, domain, 1000, 1);
-    M(4) = m_0;
-    for i = 3:-1:1
-        M(i) = M(i+1) / x(i);
+    V_p = sqrt(mu / R); % vitesse finale
+    % mass = @(x) [-prod(steps(1, 1:3) ./ x - step(1, 1:3)), dot(step(2, 1:3), log(x)) - V_p];
+    % [x, ~, ~, ~] = SQP(x_0, mass, 0.001, domain, 1000, 1);
+    m_e = [145349, 31215, 7933, 1700]; % TODO: m_e = 1500
+    M_i(4) = m_0;
+    % calcul des masses
+    for j = 3:-1:1
+        M_f(j) = M_i(j + 1) + steps(j, 3) * m_e(j);
+        M_i(j) = M_f(j) + m_e(j);
     end
-    t(0) = 0;
+    % calcul des durees
+    t = zeros(1, 3);
+    for j = 2:3
+        t(j) = steps(j - 1, 2) / (steps(j - 1, 1) * M_i(j)) * m_e(j);
+    end
     hold on;
+    k = 0;
+    v = zeros(1, 4);
     while k < length(steps)
-        f = @(t, q) F(q, k + 1, step(1:3, 1), step(1:3, 2), theta, c_x, rho_0, R_t);
-        [t, Q] = ode45(f, [R_0, V(k + 1), M(k + 1)], [t(k), t(k+1)]);
-        plot(t, Q);
+        f = @(t, q) F(q, k + 1, steps(1:3, 1), steps(1:3, 2), theta, c_x, rho_0, R_t);
+        [T, Q] = ode45(f, t(k + 1):0.01:t(k + 2), [R_0', v(k + 1) * [cos(theta(k + 1)), sin(theta(k + 1))], M_i(k + 1)]);
+        n = length(T);
+        v(k + 2) = norm(Q(n, 3:4), 2);
+        plot(T, Q(n, 1:2));
+        k = k + 1;
     end
     hold off;
+    N = length(t);
+    V = dot(Q(N, 3:4), Q(N, 3:4)); % valeur
+    C = dot(Q(N, 1:2), Q(N, 3:4)); % contraintes
 end
 
 % rho_0 = 1.225
