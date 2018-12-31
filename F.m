@@ -20,5 +20,12 @@ function Q_prime = F(Q, i, alpha, v_e, M_i, theta)
     Q_prime(1:2) = Q(3:4);
     Q_prime(3:4) = -mu * Q(1:2) / norm(Q(1:2), 2)^3 + alpha(i) * u - c_x * rho_0 * exp(-(norm(Q(1:2), 2) - R_t) / H) / Q(5) * norm(Q(3:4), 2) * Q(3:4);
     Q_prime(5) = -alpha(i) / v_e(i) * M_i;
+    %R = Q(1:2);
+    %V = Q(3:4);
+    %M = Q(5);
+    %Ru = 1 / norm(R, 2) * R;
+    %Q_prime(1:2) = R;
+    %Q_prime(3:4) = -mu / norm(R, 2) * Ru + alpha(i) * u - c_x * rho_0 * exp(-(norm(R) - R_t) / H) / M * norm(V, 2) * V;
+    %Q_prime(5) = -alpha(i) / v_e(i) * M_i;
     % Q_prime = Q_prime';
 end
