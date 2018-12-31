@@ -19,14 +19,15 @@ m_1 = @(m) steps(1, 2) * log((m_u+(1+steps(3, 3))*m(3)+(1+steps(2, 3))*m(2)+(1+s
 F = @(m) [m_u + dot((1 + steps(1:3, 1)), m); -V + m_1(m) + m_2(m) + m_3(m)];
 domain = [[1e5, 2e5]; [1e4, 5e4]; [5e3, 1e4]];
 
-printf("Calcul des masses d'ergols\n");
+fprintf("Calcul des masses d'ergols\n");
 [m_e, ~, ~, k] = SQP(m_0, F, 1e-6, domain, 30, 1, 0);
 
-theta_0 = [1; 1];
+theta_0 = [1; 1; 1; 1];
+%theta_0 = [1; 1];
 domain_theta = [[-pi / 2, pi / 2]; [-pi / 2, pi / 2]; [-pi / 2, pi / 2]; [-pi / 2, pi / 2]];
 G = @(theta) ode_integration(m_u, [m_e', m_u], [1, 1, theta'], R, 0);
-G(theta_0)
-printf("Calcul des angles\n");
-[theta, ~, ~, k] = SQP(theta_0, G, 1e-6, domain_theta, 30, 1, 0);
+% G(theta_0)
+fprintf("Calcul des angles\n");
+[theta, ~, ~, k] = SQP(theta_0, G, 1e-6, domain_theta, 30, 1, 1);
 
 ode_integration(m_u, [m_e', m_u], [1, 1, theta'], R, 1)
