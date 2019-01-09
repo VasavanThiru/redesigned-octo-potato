@@ -4,11 +4,12 @@ clear all;
 
 % Constants
 mu = 3.986e14;
+R_t = 6378137;
 
 % Parametres
 m_u = 1500;
 R = 200e3;
-V = sqrt(mu / R);
+V = sqrt(mu / (R_t + R));
 m_0 = [1.8e5; 5e4; 1.5e4];
 % acceleration, vitesse, indice
 steps = [15, 2600, 0.1; 10, 3000, 0.15; 10, 4400, 0.20];
